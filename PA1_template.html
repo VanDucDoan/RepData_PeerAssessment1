@@ -140,7 +140,8 @@ head(df)</code></pre>
 </div>
 <div id="what-is-mean-total-number-of-steps-taken-per-day" class="section level2">
 <h2>What is mean total number of steps taken per day?</h2>
-<pre class="r"><code># find data without missing
+<pre class="r"><code>knitr::opts_chunk$set(fig.path = &quot;figure/&quot;)
+# find data without missing
 isGoodData &lt;- !is.na(df[, 1]) 
 # group the data according to date
 dayNumSteps &lt;- split(df[isGoodData, 1], df[isGoodData, 2])
@@ -271,7 +272,8 @@ timeVal</code></pre>
 ## [253] 1260 1265 1270 1275 1280 1285 1290 1295 1300 1305 1310 1315 1320 1325
 ## [267] 1330 1335 1340 1345 1350 1355 1360 1365 1370 1375 1380 1385 1390 1395
 ## [281] 1400 1405 1410 1415 1420 1425 1430 1435</code></pre>
-<pre class="r"><code># plot the data
+<pre class="r"><code>knitr::opts_chunk$set(fig.path = &quot;figure/&quot;)
+# plot the data
 plot(timeVal, averageIntervalNumSteps,
      main = &quot;Averaged across all days&quot;,
      xlab = &quot;&quot;, ylab = &quot;Average number of steps&quot;,
@@ -308,7 +310,8 @@ head(new_df)</code></pre>
 ## 4     0 2012-10-01       15
 ## 5     0 2012-10-01       20
 ## 6     2 2012-10-01       25</code></pre>
-<pre class="r"><code># group the data according to date
+<pre class="r"><code>knitr::opts_chunk$set(fig.path = &quot;figure/&quot;)
+# group the data according to date
 new_dayNumSteps &lt;- split(new_df[, 1], new_df[, 2])
 # calculate sum of the number of steps taken each day
 new_totNumSteps &lt;- sapply(new_dayNumSteps, sum)
@@ -322,7 +325,8 @@ mean(new_totNumSteps)</code></pre>
 median(new_totNumSteps)</code></pre>
 <pre><code>## [1] 10762</code></pre>
 <p>Compare with the mean and median in the first part, they slightly different (smaller than the values in the first part).</p>
-<pre class="r"><code># group the data according to interval
+<pre class="r"><code>knitr::opts_chunk$set(fig.path = &quot;figure/&quot;)
+# group the data according to interval
 new_intervalNumSteps &lt;- split(new_df[, 1], new_df[, 3])
 # calculate average of the number of steps taken each day
 new_averageIntervalNumSteps &lt;- sapply(new_intervalNumSteps, mean)
@@ -365,7 +369,8 @@ weekendData &lt;- split(new_df[new_df[, 5] == &quot;weekend&quot;, 1], new_df[ne
 # calculate average of the number of steps taken each day
 wkd_averageIntervalNumSteps &lt;- sapply(weekdayData, mean)
 wke_averageIntervalNumSteps &lt;- sapply(weekendData, mean)</code></pre>
-<pre class="r"><code>par(mfrow = c(2, 1), 
+<pre class="r"><code>knitr::opts_chunk$set(fig.path = &quot;figure/&quot;)
+par(mfrow = c(2, 1), 
     oma = c(0, 0, 0, 0),
     omd = c(0, 0, 0, 0),
     omi = c(0, 0, 0, 0),
