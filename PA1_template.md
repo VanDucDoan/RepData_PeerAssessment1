@@ -31,6 +31,7 @@ head(df)
 ## What is mean total number of steps taken per day?
 
 ```r
+knitr::opts_chunk$set(fig.path = "figure/")
 # find data without missing
 isGoodData <- !is.na(df[, 1]) 
 # group the data according to date
@@ -197,6 +198,7 @@ timeVal
 
 
 ```r
+knitr::opts_chunk$set(fig.path = "figure/")
 # plot the data
 plot(timeVal, averageIntervalNumSteps,
      main = "Averaged across all days",
@@ -209,7 +211,7 @@ days <- c("00:00", "05:00", "10:00", "15:00", "20:00")
 axis(side = 1, at = xsticks, labels = days, tck = -0.05)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+![](figure/unnamed-chunk-4-1.png)<!-- -->
 
 ```r
 # interval of maximum number of steps
@@ -257,6 +259,7 @@ head(new_df)
 
 
 ```r
+knitr::opts_chunk$set(fig.path = "figure/")
 # group the data according to date
 new_dayNumSteps <- split(new_df[, 1], new_df[, 2])
 # calculate sum of the number of steps taken each day
@@ -265,7 +268,7 @@ new_totNumSteps <- sapply(new_dayNumSteps, sum)
 hist(new_totNumSteps, main = "Histogram of the total number steps (imputed)")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](figure/unnamed-chunk-6-1.png)<!-- -->
 
 ```r
 # mean
@@ -289,6 +292,7 @@ Compare with the mean and median in the first part, they slightly different (sma
 
 
 ```r
+knitr::opts_chunk$set(fig.path = "figure/")
 # group the data according to interval
 new_intervalNumSteps <- split(new_df[, 1], new_df[, 3])
 # calculate average of the number of steps taken each day
@@ -309,7 +313,7 @@ axis(side = 1, at = xsticks, labels = days, tck = -0.05)
 legend("topright", legend = c("Missing", "Imputed"), col = c("black", "red"), lty = 1)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](figure/unnamed-chunk-7-1.png)<!-- -->
 
 ```r
 # interval of maximum number of steps
@@ -349,6 +353,7 @@ wke_averageIntervalNumSteps <- sapply(weekendData, mean)
 
 
 ```r
+knitr::opts_chunk$set(fig.path = "figure/")
 par(mfrow = c(2, 1), 
     oma = c(0, 0, 0, 0),
     omd = c(0, 0, 0, 0),
@@ -378,4 +383,4 @@ days <- c("00:00", "05:00", "10:00", "15:00", "20:00")
 axis(side = 1, at = xsticks, labels = days, tck = -0.05)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](figure/unnamed-chunk-10-1.png)<!-- -->
