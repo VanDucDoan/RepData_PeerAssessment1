@@ -7,19 +7,188 @@ output:
 
 
 ## Loading and preprocessing the data
-
+```{r cache=TRUE}
+# file name
+file_name <- "activity.zip"
+# read file and save the data in a data frame, named as 'df'
+df <- read.csv(unz(file_name, "activity.csv"), header = TRUE, sep = ",")
+# display the head data in the data frame
+head(df)
+```
 
 
 ## What is mean total number of steps taken per day?
-
+```{r cache=TRUE}
+# find data without missing
+isGoodData <- !is.na(df[, 1]) 
+# group the data according to date
+dayNumSteps <- split(df[isGoodData, 1], df[isGoodData, 2])
+# calculate sum of the number of steps taken each day
+totNumSteps <- sapply(dayNumSteps, sum)
+# make a histogram of the total number steps taken each day
+hist(totNumSteps, main = "Histogram of the total number steps")
+# calculate the mean and median
+goodTotNumSteps <- numeric() 
+iCount <- 0
+for (i in 1:length(totNumSteps)) {
+    if (length(dayNumSteps[[i]]) != 0) {
+        iCount <- iCount + 1
+        goodTotNumSteps[iCount] <- totNumSteps[[i]]
+    }
+}
+# display total number of steps in days the date are taken
+goodTotNumSteps
+# mean
+mean(goodTotNumSteps)
+# median
+median(goodTotNumSteps)
+```
 
 
 ## What is the average daily activity pattern?
+```{r cache=TRUE}
+# group the data according to interval
+intervalNumSteps <- split(df[isGoodData, 1], df[isGoodData, 3])
+# calculate sum of the number of steps taken each day
+totIntervalNumSteps <- sapply(intervalNumSteps, sum)
+averageIntervalNumSteps <- numeric(length = length(totIntervalNumSteps))
+for (i in 1:length(totIntervalNumSteps)) {
+    averageIntervalNumSteps[i] <- totIntervalNumSteps[i] / length(intervalNumSteps[[i]])
+}
+# avarage number of steps taken
+averageIntervalNumSteps
+# Calculate time axis
+timeVal <- numeric(length = 288)
+for (i in 1:288) {
+    timeFormat <- strptime(sprintf("%04.0f", df[i, 3]), format = "%H%M")
+    timeVal[i] <- timeFormat$hour * 60 + timeFormat$min
+}
+# time axis
+timeVal
+```
 
+```{r cache=TRUE}
+# plot the data
+plot(timeVal, averageIntervalNumSteps,
+     main = "Averaged across all days",
+     xlab = "", ylab = "Average number of steps",
+     col = "black",
+     type = "l",
+     xaxt = "n")
+xsticks <- c(0 * 60, 5 * 60, 10 * 60, 15 * 60, 20 * 60)
+days <- c("00:00", "05:00", "10:00", "15:00", "20:00") 
+axis(side = 1, at = xsticks, labels = days, tck = -0.05)
+# interval of maximum number of steps
+intervalMax <- timeVal[averageIntervalNumSteps == max(averageIntervalNumSteps)]
+sprintf("%02.0f:%02.0f", intervalMax %/% 60, intervalMax %% 60)
+```
 
 
 ## Imputing missing values
+```{r cache=FALSE}
+# number of missing data
+sum(is.na(df[, 1])) 
+# impute the missing data by mean (the mean for 5-minute interval)
+new_df <- data.frame(df)
+for (i in 1:nrow(new_df)) {
+    if (is.na(new_df[i, 1]) == TRUE) {
+        new_df[i, 1] <- as.integer(round(averageIntervalNumSteps[((i %% 288) == 0) * 288 + (i %% 288)]))
+    }
+}
+# display head of imputed data
+head(new_df)
+```
 
+```{r cache=FALSE}
+# group the data according to date
+new_dayNumSteps <- split(new_df[, 1], new_df[, 2])
+# calculate sum of the number of steps taken each day
+new_totNumSteps <- sapply(new_dayNumSteps, sum)
+# make a histogram of the total number steps taken each day
+hist(new_totNumSteps, main = "Histogram of the total number steps (imputed)")
+# mean
+mean(new_totNumSteps)
+# median
+median(new_totNumSteps)
+```
 
+Compare with the mean and median in the first part, they slightly different (smaller than the values in the first part).
+
+```{r cache=TRUE}
+# group the data according to interval
+new_intervalNumSteps <- split(new_df[, 1], new_df[, 3])
+# calculate average of the number of steps taken each day
+new_averageIntervalNumSteps <- sapply(new_intervalNumSteps, mean)
+# plot the data
+matplot(timeVal, 
+       cbind(averageIntervalNumSteps, new_averageIntervalNumSteps),
+       main = "Averaged across all days (imputed)",
+       xlab = "", ylab = "Average number of steps (imputed)",
+       col = c("black", "red"),
+       lwd = c(4, 1),
+       lty = c(1, 1),
+       type = c("l", "l"),
+       xaxt = "n")
+xsticks <- c(0 * 60, 5 * 60, 10 * 60, 15 * 60, 20 * 60)
+days <- c("00:00", "05:00", "10:00", "15:00", "20:00") 
+axis(side = 1, at = xsticks, labels = days, tck = -0.05)
+legend("topright", legend = c("Missing", "Imputed"), col = c("black", "red"), lty = 1)
+
+# interval of maximum number of steps
+new_intervalMax <- timeVal[new_averageIntervalNumSteps == max(new_averageIntervalNumSteps)]
+sprintf("%02.0f:%02.0f", intervalMax %/% 60, intervalMax %% 60)
+```
+Since imputation of data uses the mean of 5-minute interval, the plot of averaged number across all days is insignificantly changed.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r cache=TRUE}
+# add a column of day
+new_df$day <- weekdays(strptime(as.character(new_df[, 2]), format = "%Y-%m-%d"))
+for (i in 1:nrow(new_df)) {
+    if ((new_df$day[i] != "Saturday") & (new_df$day[i] != "Sunday"))
+        new_df$dayType[i] <- "weekday"
+    else
+        new_df$dayType[i] <- "weekend"
+}
+# factor variable
+new_df$dayType <- factor(new_df$dayType)
+```
+
+```{r cache=TRUE}
+# split data
+weekdayData <- split(new_df[new_df[, 5] == "weekday", 1], new_df[new_df[, 5] == "weekday", 3])
+weekendData <- split(new_df[new_df[, 5] == "weekend", 1], new_df[new_df[, 5] == "weekend", 3])
+# calculate average of the number of steps taken each day
+wkd_averageIntervalNumSteps <- sapply(weekdayData, mean)
+wke_averageIntervalNumSteps <- sapply(weekendData, mean)
+```
+
+```{r cache=FALSE}
+par(mfrow = c(2, 1), 
+    oma = c(0, 0, 0, 0),
+    omd = c(0, 0, 0, 0),
+    omi = c(0, 0, 0, 0),
+    mai = c(0.8, 0.8, 0.2, 0.2))
+
+# Plot 2.1: Plot of weekend data
+plot(timeVal, wke_averageIntervalNumSteps,
+     main = "Averaged across all weekends",
+     xlab = "", ylab = "Average number of steps",
+     col = "black",
+     type = "l",
+     xaxt = "n")
+xsticks <- c(0 * 60, 5 * 60, 10 * 60, 15 * 60, 20 * 60)
+days <- c("00:00", "05:00", "10:00", "15:00", "20:00") 
+axis(side = 1, at = xsticks, labels = days, tck = -0.05)
+
+# Plot 4.2: Plot of weekday data
+plot(timeVal, wkd_averageIntervalNumSteps,
+     main = "Averaged across all weekdays",
+     xlab = "", ylab = "Average number of steps",
+     col = "black",
+     type = "l",
+     xaxt = "n")
+xsticks <- c(0 * 60, 5 * 60, 10 * 60, 15 * 60, 20 * 60)
+days <- c("00:00", "05:00", "10:00", "15:00", "20:00") 
+axis(side = 1, at = xsticks, labels = days, tck = -0.05)
+```
