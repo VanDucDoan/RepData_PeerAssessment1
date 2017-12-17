@@ -19,6 +19,7 @@ head(df)
 
 ## What is mean total number of steps taken per day?
 ```{r cache=TRUE}
+knitr::opts_chunk$set(fig.path = "figure/")
 # find data without missing
 isGoodData <- !is.na(df[, 1]) 
 # group the data according to date
@@ -68,6 +69,7 @@ timeVal
 ```
 
 ```{r cache=TRUE}
+knitr::opts_chunk$set(fig.path = "figure/")
 # plot the data
 plot(timeVal, averageIntervalNumSteps,
      main = "Averaged across all days",
@@ -100,6 +102,7 @@ head(new_df)
 ```
 
 ```{r cache=FALSE}
+knitr::opts_chunk$set(fig.path = "figure/")
 # group the data according to date
 new_dayNumSteps <- split(new_df[, 1], new_df[, 2])
 # calculate sum of the number of steps taken each day
@@ -115,6 +118,7 @@ median(new_totNumSteps)
 Compare with the mean and median in the first part, they slightly different (smaller than the values in the first part).
 
 ```{r cache=TRUE}
+knitr::opts_chunk$set(fig.path = "figure/")
 # group the data according to interval
 new_intervalNumSteps <- split(new_df[, 1], new_df[, 3])
 # calculate average of the number of steps taken each day
@@ -164,6 +168,7 @@ wke_averageIntervalNumSteps <- sapply(weekendData, mean)
 ```
 
 ```{r cache=FALSE}
+knitr::opts_chunk$set(fig.path = "figure/")
 par(mfrow = c(2, 1), 
     oma = c(0, 0, 0, 0),
     omd = c(0, 0, 0, 0),
